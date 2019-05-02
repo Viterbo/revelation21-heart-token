@@ -147,7 +147,7 @@ namespace eosio {
             static const int64_t claim_days = 1;
 
             // Unclaimed UBI accumulates to this maximum days.
-            static const int64_t max_past_claim_days = 360;
+            static const int64_t max_past_claim_days = 36000;
         };
 
 } /// namespace eosio
