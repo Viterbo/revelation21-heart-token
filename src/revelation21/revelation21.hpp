@@ -12,11 +12,21 @@
  */
 #pragma once
 
-#include <eosiolib/asset.hpp>
 #include <eosiolib/eosio.hpp>
+#include <eosiolib/symbol.hpp>
+#include <eosiolib/asset.hpp>
+#include <eosiolib/print.hpp>
 #include <eosiolib/transaction.hpp>
+#include <eosiolib/singleton.hpp>
+
 
 #include <string>
+
+/* <-- erase just one slash bar to switch those codes (commented/actual-code)
+#define PRINT(...) print(__VA_ARGS__)
+/*/
+#define PRINT(...)
+//*/
 
 namespace eosiosystem {
     class system_contract;

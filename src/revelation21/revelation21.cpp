@@ -262,6 +262,7 @@ void token::try_ubi_claim( name from, const symbol& sym, name payer, stats& stat
 
             // 1.8 version fix
             string memo = claim_memo( from, claim_quantity, from_extra.last_claim_day + last_claim_day_delta, lost_days );
+            PRINT(memo.c_str(),"\n");
 
             action(
                 permission_level{get_self(), name("active")},
@@ -301,16 +302,12 @@ void token::try_ubi_claim( name from, const symbol& sym, name payer, stats& stat
 
 // This calls a transfer-to-self just to log a memo that explains what the UBI payment was.
 string token::claim_memo( name claimant, asset claim_quantity, time_type next_last_claim_day, time_type lost_days ) {
-    string claim_memo = "[HEART-UBI] +";
-    claim_memo.append( claim_quantity.to_string() );
-    claim_memo.append(" (next: " );
+    string claim_memo = string("You, ");
+    claim_memo.append(claimant.to_string());
+    claim_memo.append(", carry the seal. Blessed is thee. The blessed may drink daily from the HEART spring; however you must give first, before you receive." );
+    claim_memo.append(" [Next HEART - " );
     claim_memo.append( days_to_string(next_last_claim_day + 1) );
-    claim_memo.append( ")" );
-    if (lost_days > 0) {
-        claim_memo.append(" (lost: ");
-        claim_memo.append( std::to_string(lost_days) );
-        claim_memo.append(" days of income)");
-    }
+    claim_memo.append( "]" );
 
     // 1.8 version fix
     // SEND_INLINE_ACTION( *this, transfer, { {claimant, "active"_n} },
