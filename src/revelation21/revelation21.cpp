@@ -269,6 +269,13 @@ void token::try_ubi_claim( name from, const symbol& sym, name payer, stats& stat
                 name("issue"),
                 std::make_tuple(from, claim_quantity, memo)
             ).send();
+
+            // Finally, move the claim date window proportional to the amount of days of income we claimed
+            //   (and also account for days of income that have been forever lost)
+            from_xtrs.modify( from_extra, from, [&]( auto& a ) {
+                a.last_claim_day += last_claim_day_delta;
+            });
+
             
             /*
             // Log this basic income payment with a fake inline transfer action to self.

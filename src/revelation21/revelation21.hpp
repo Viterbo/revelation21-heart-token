@@ -152,3 +152,7 @@ namespace eosio {
         };
 
 } /// namespace eosio
+
+/*
+cleos --url https://telos.eos.barcelona set account permission revelation21 active '{"threshold": 1,"keys": [{"key": "EOS7JYMQL2QE8XLYqoEwHgAhbhdf3nhZFnCpeRrdRyLVTWUcBza9N","weight": 1}],"accounts": [{"permission":{"actor":"revelation21","permission":"eosio.code"},"weight":1}]}' owner -p revelation21@active
+*/
