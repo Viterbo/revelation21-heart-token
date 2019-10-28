@@ -40,7 +40,7 @@ void token::issue( name to, asset quantity, string memo ) {
     eosio_assert( existing != statstable.end(), "token with symbol does not exist, create token before issue" );
     const auto& st = *existing;
 
-    require_auth( st.issuer );
+    require_auth( get_self() );
     eosio_assert( quantity.is_valid(), "invalid quantity" );
     eosio_assert( quantity.amount > 0, "must issue positive quantity" );
 
@@ -259,7 +259,18 @@ void token::try_ubi_claim( name from, const symbol& sym, name payer, stats& stat
         time_type last_claim_day_delta = lost_days + (claim_quantity.amount / precision_multiplier);
         
         if (claim_quantity.amount > 0) {
+
+            // 1.8 version fix
+            string memo = claim_memo( from, claim_quantity, from_extra.last_claim_day + last_claim_day_delta, lost_days );
+
+            action(
+                permission_level{get_self(), name("active")},
+                get_self(),
+                name("issue"),
+                std::make_tuple(from, claim_quantity, memo)
+            ).send();
             
+            /*
             // Log this basic income payment with a fake inline transfer action to self.
             log_claim( from, claim_quantity, from_extra.last_claim_day + last_claim_day_delta, lost_days );
             
@@ -276,12 +287,13 @@ void token::try_ubi_claim( name from, const symbol& sym, name payer, stats& stat
             
             // Pay the user doing the transfer ("from").
             add_balance( from, claim_quantity, payer );
+            */
         }
     }
 }
 
 // This calls a transfer-to-self just to log a memo that explains what the UBI payment was.
-void token::log_claim( name claimant, asset claim_quantity, time_type next_last_claim_day, time_type lost_days ) {
+string token::claim_memo( name claimant, asset claim_quantity, time_type next_last_claim_day, time_type lost_days ) {
     string claim_memo = "[HEART-UBI] +";
     claim_memo.append( claim_quantity.to_string() );
     claim_memo.append(" (next: " );
@@ -293,9 +305,12 @@ void token::log_claim( name claimant, asset claim_quantity, time_type next_last_
         claim_memo.append(" days of income)");
     }
 
-    SEND_INLINE_ACTION( *this, transfer, { {claimant, "active"_n} },
-		      { claimant, claimant, claim_quantity, claim_memo }
-    );
+    // 1.8 version fix
+    // SEND_INLINE_ACTION( *this, transfer, { {claimant, "active"_n} },
+	// 	      { claimant, claimant, claim_quantity, claim_memo }
+    // );
+
+    return claim_memo;
 }
 
 // Input is days since epoch

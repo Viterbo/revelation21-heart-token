@@ -99,7 +99,7 @@ namespace eosio {
 
             void try_ubi_claim( name from, const symbol& sym, name payer, stats& statstable, const currency_stats& st );
 
-            void log_claim( name claimant, asset claim_quantity, time_type next_last_claim_day, time_type lost_days );
+            string claim_memo( name claimant, asset claim_quantity, time_type next_last_claim_day, time_type lost_days );
         
             static int64_t get_precision_multiplier ( const symbol& symbol ) {
                 int64_t precision_multiplier = 1;
@@ -122,6 +122,7 @@ namespace eosio {
             //   later KYC'd will be able to claim up to "max_past_claim_days" days of back pay.
             bool can_claim_UBI( name claimant ) {
                 // for HEART token UBI username MUST end with ".jc"
+
                 string str = claimant.to_string();
                 int len = str.size();
                 if (str[len-3] != '.') return false;
